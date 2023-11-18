@@ -19,8 +19,11 @@ urlpatterns = [
         ),
         name='registration',
     ),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
 
-handler404 = 'blog.views.page_not_found'
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)
 
-handler500 = 'blog.views.server_error'
+handler404 = 'core.views.page_not_found'
+handler500 = 'core.views.server_error'

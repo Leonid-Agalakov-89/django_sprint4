@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
 
-from .models import Category, Location, Post
+from blog.models import Category, Comment, Location, Post
 
 admin.site.unregister(Group)
 admin.site.empty_value_display = 'Не задано'
@@ -9,6 +9,11 @@ admin.site.empty_value_display = 'Не задано'
 
 class PostInline(admin.StackedInline):
     model = Post
+    extra = 0
+
+
+class CommentInline(admin.StackedInline):
+    model = Comment
     extra = 0
 
 
@@ -24,7 +29,14 @@ class LocationAdmin(admin.ModelAdmin):
     )
 
 
+class CommentAdmin(admin.ModelAdmin):
+    empty_value_display = 'Не задано'
+
+
 class PostAdmin(admin.ModelAdmin):
+    inlines = (
+        CommentInline,
+    )
     list_display = (
         '__str__',
         'title',
@@ -33,7 +45,7 @@ class PostAdmin(admin.ModelAdmin):
         'is_published',
         'author',
         'location',
-        'category'
+        'category',
     )
     list_editable = (
         'is_published',
@@ -53,3 +65,4 @@ class PostAdmin(admin.ModelAdmin):
 admin.site.register(Post, PostAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Location, LocationAdmin)
+admin.site.register(Comment, CommentAdmin)

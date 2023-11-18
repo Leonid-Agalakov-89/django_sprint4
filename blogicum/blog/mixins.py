@@ -1,3 +1,4 @@
+from django.shortcuts import redirect
 from django.urls import reverse
 
 from blog.forms import CommentForm, PostForm
@@ -19,5 +20,12 @@ class CommentMixin:
 
     def get_success_url(self):
         return reverse(
-            'blog:post_detail', kwargs={'pk': self.kwargs['post_id']}
+            'blog:post_detail', kwargs={'post_id': self.kwargs['post_id']}
         )
+
+
+class DispatchMixin:
+    def dispatch(self, request, *args, **kwargs):
+        if self.get_object().author != request.user:
+            return redirect('blog:post_detail', post_id=kwargs['post_id'])
+        return super().dispatch(request, *args, **kwargs)

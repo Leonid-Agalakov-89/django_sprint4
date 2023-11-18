@@ -1,8 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
-from blog.constants import (LENGTH_OF_CATEGORY_TITLE, LENGTH_OF_LOCATION_NAME,
-                            LENGTH_OF_POST_TITLE, LENGTH_OF_STRING)
+from blog.constants import (LENGTH_OF_CATEGORY_TITLE, LENGTH_OF_COMMENT_TEXT,
+                            LENGTH_OF_LOCATION_NAME, LENGTH_OF_POST_TITLE,
+                            LENGTH_OF_STRING)
 from core.models import PublishedModel
 
 User = get_user_model()
@@ -72,9 +73,9 @@ class Post(PublishedModel):
         verbose_name='Дата и время публикации'
     )
     image = models.ImageField(
-        'Фото',
         upload_to='posts_images',
-        blank=True
+        blank=True,
+        verbose_name='Фото'
     )
     author = models.ForeignKey(
         User,
@@ -108,14 +109,31 @@ class Post(PublishedModel):
 
 
 class Comment(models.Model):
-    text = models.TextField('Комментарий')
+    """Модель комментариев"""
+
+    text = models.TextField(
+        verbose_name='Комментарий'
+    )
     post = models.ForeignKey(
         Post,
         on_delete=models.CASCADE,
-        related_name='comment',
+        related_name='comments',
+        verbose_name='Публикация'
     )
-    created_at = models.DateTimeField(auto_now_add=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Опубликован'
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Автор'
+    )
 
     class Meta:
+        verbose_name = 'комментарии'
+        verbose_name_plural = 'Комментарии'
         ordering = ('created_at',)
+
+    def __str__(self):
+        return self.text[:LENGTH_OF_COMMENT_TEXT]
